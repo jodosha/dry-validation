@@ -2,8 +2,7 @@ source 'https://rubygems.org'
 
 gemspec
 
-gem 'dry-logic', require: false, github: 'dry-rb/dry-logic'
-gem 'dry-types', require: false, github: 'dry-rb/dry-types'
+gem 'dry-types', github: 'dry-rb/dry-types', branch: 'master'
 
 group :test do
   gem 'i18n'

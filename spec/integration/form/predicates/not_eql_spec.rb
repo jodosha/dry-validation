@@ -1,8 +1,16 @@
-RSpec.describe 'Predicates: None' do
+RSpec.describe 'Predicates: Not Eql' do
   context 'with required' do
     subject(:schema) do
       Dry::Validation.Form do
-        required(:foo) { none? }
+        required(:foo) { not_eql?('23') }
+      end
+    end
+
+    context 'with valid input' do
+      let(:input) { { 'foo' => '13' } }
+
+      it 'is successful' do
+        expect(result).to be_successful
       end
     end
 
@@ -10,7 +18,7 @@ RSpec.describe 'Predicates: None' do
       let(:input) { {} }
 
       it 'is not successful' do
-        expect(result).to be_failing ['is missing']
+        expect(result).to be_failing ['is missing', 'must not be equal to 23']
       end
     end
 
@@ -27,14 +35,6 @@ RSpec.describe 'Predicates: None' do
 
       it 'is successful' do
         expect(result).to be_successful
-      end
-    end
-
-    context 'with other input' do
-      let(:input) { { 'foo' => '23' } }
-
-      it 'is not successful' do
-        expect(result).to be_failing ['cannot be defined']
       end
     end
   end
@@ -42,7 +42,15 @@ RSpec.describe 'Predicates: None' do
   context 'with optional' do
     subject(:schema) do
       Dry::Validation.Form do
-        optional(:foo) { none? }
+        optional(:foo) { not_eql?('23') }
+      end
+    end
+
+    context 'with valid input' do
+      let(:input) { { 'foo' => '13' } }
+
+      it 'is successful' do
+        expect(result).to be_successful
       end
     end
 
@@ -67,14 +75,6 @@ RSpec.describe 'Predicates: None' do
 
       it 'is successful' do
         expect(result).to be_successful
-      end
-    end
-
-    context 'with other input' do
-      let(:input) { { 'foo' => '23' } }
-
-      it 'is not successful' do
-        expect(result).to be_failing ['cannot be defined']
       end
     end
   end
@@ -84,7 +84,15 @@ RSpec.describe 'Predicates: None' do
       context 'with value' do
         subject(:schema) do
           Dry::Validation.Form do
-            required(:foo).value(:none?)
+            required(:foo).value(not_eql?: '23')
+          end
+        end
+
+        context 'with valid input' do
+          let(:input) { { 'foo' => '13' } }
+
+          it 'is successful' do
+            expect(result).to be_successful
           end
         end
 
@@ -92,7 +100,7 @@ RSpec.describe 'Predicates: None' do
           let(:input) { {} }
 
           it 'is not successful' do
-            expect(result).to be_failing ['is missing']
+            expect(result).to be_failing ['is missing', 'must not be equal to 23']
           end
         end
 
@@ -109,14 +117,6 @@ RSpec.describe 'Predicates: None' do
 
           it 'is successful' do
             expect(result).to be_successful
-          end
-        end
-
-        context 'with other input' do
-          let(:input) { { 'foo' => '23' } }
-
-          it 'is not successful' do
-            expect(result).to be_failing ['cannot be defined']
           end
         end
       end
@@ -124,7 +124,15 @@ RSpec.describe 'Predicates: None' do
       context 'with filled' do
         subject(:schema) do
           Dry::Validation.Form do
-            required(:foo).filled(:none?)
+            required(:foo).filled(not_eql?: '23')
+          end
+        end
+
+        context 'with valid input' do
+          let(:input) { { 'foo' => '13' } }
+
+          it 'is successful' do
+            expect(result).to be_successful
           end
         end
 
@@ -132,7 +140,7 @@ RSpec.describe 'Predicates: None' do
           let(:input) { {} }
 
           it 'is not successful' do
-            expect(result).to be_failing ['is missing']
+            expect(result).to be_failing ['is missing', 'must not be equal to 23']
           end
         end
 
@@ -140,7 +148,7 @@ RSpec.describe 'Predicates: None' do
           let(:input) { { 'foo' => nil } }
 
           it 'is not successful' do
-            expect(result).to be_failing ['must be filled']
+            expect(result).to be_failing ['must be filled', 'must not be equal to 23']
           end
         end
 
@@ -148,25 +156,48 @@ RSpec.describe 'Predicates: None' do
           let(:input) { { 'foo' => '' } }
 
           it 'is not successful' do
-            expect(result).to be_failing ['must be filled']
-          end
-        end
-
-        context 'with other input' do
-          let(:input) { { 'foo' => '23' } }
-
-          it 'is not successful' do
-            expect(result).to be_failing ['cannot be defined']
+            expect(result).to be_failing ['must be filled', 'must not be equal to 23']
           end
         end
       end
 
-      #makes no sense see: #134
       context 'with maybe' do
-        it "should raise error" do
-          expect { Dry::Validation.Form do
-            required(:foo).maybe(:none?)
-          end }.to raise_error InvalidSchemaError
+        subject(:schema) do
+          Dry::Validation.Form do
+            required(:foo).maybe(not_eql?: '23')
+          end
+        end
+
+        context 'with valid input' do
+          let(:input) { { 'foo' => '13' } }
+
+          it 'is successful' do
+            expect(result).to be_successful
+          end
+        end
+
+        context 'with missing input' do
+          let(:input) { {} }
+
+          it 'is not successful' do
+            expect(result).to be_failing ['is missing', 'must not be equal to 23']
+          end
+        end
+
+        context 'with nil input' do
+          let(:input) { { 'foo' => nil } }
+
+          it 'is successful' do
+            expect(result).to be_successful
+          end
+        end
+
+        context 'with blank input' do
+          let(:input) { { 'foo' => '' } }
+
+          it 'is successful' do
+            expect(result).to be_successful
+          end
         end
       end
     end
@@ -175,7 +206,15 @@ RSpec.describe 'Predicates: None' do
       context 'with value' do
         subject(:schema) do
           Dry::Validation.Form do
-            optional(:foo).value(:none?)
+            optional(:foo).value(not_eql?: '23')
+          end
+        end
+
+        context 'with valid input' do
+          let(:input) { { 'foo' => '13' } }
+
+          it 'is successful' do
+            expect(result).to be_successful
           end
         end
 
@@ -198,16 +237,8 @@ RSpec.describe 'Predicates: None' do
         context 'with blank input' do
           let(:input) { { 'foo' => '' } }
 
-          it 'is  successful' do
+          it 'is successful' do
             expect(result).to be_successful
-          end
-        end
-
-        context 'with other input' do
-          let(:input) { { 'foo' => '23' } }
-
-          it 'is not successful' do
-            expect(result).to be_failing ['cannot be defined']
           end
         end
       end
@@ -215,7 +246,15 @@ RSpec.describe 'Predicates: None' do
       context 'with filled' do
         subject(:schema) do
           Dry::Validation.Form do
-            optional(:foo).filled(:none?)
+            optional(:foo).filled(not_eql?: '23')
+          end
+        end
+
+        context 'with valid input' do
+          let(:input) { { 'foo' => '13' } }
+
+          it 'is successful' do
+            expect(result).to be_successful
           end
         end
 
@@ -231,7 +270,7 @@ RSpec.describe 'Predicates: None' do
           let(:input) { { 'foo' => nil } }
 
           it 'is not successful' do
-            expect(result).to be_failing ['must be filled']
+            expect(result).to be_failing ['must be filled', 'must not be equal to 23']
           end
         end
 
@@ -239,25 +278,48 @@ RSpec.describe 'Predicates: None' do
           let(:input) { { 'foo' => '' } }
 
           it 'is not successful' do
-            expect(result).to be_failing ['must be filled']
-          end
-        end
-
-        context 'with other input' do
-          let(:input) { { 'foo' => '23' } }
-
-          it 'is not successful' do
-            expect(result).to be_failing ['cannot be defined']
+            expect(result).to be_failing ['must be filled', 'must not be equal to 23']
           end
         end
       end
 
-      #makes no sense see: #134
       context 'with maybe' do
-        it "should raise error" do
-          expect { Dry::Validation.Form do
-            optional(:foo).maybe(:none?)
-          end }.to raise_error InvalidSchemaError
+        subject(:schema) do
+          Dry::Validation.Form do
+            optional(:foo).maybe(not_eql?: '23')
+          end
+        end
+
+        context 'with valid input' do
+          let(:input) { { 'foo' => '13' } }
+
+          it 'is successful' do
+            expect(result).to be_successful
+          end
+        end
+
+        context 'with missing input' do
+          let(:input) { {} }
+
+          it 'is successful' do
+            expect(result).to be_successful
+          end
+        end
+
+        context 'with nil input' do
+          let(:input) { { 'foo' => nil } }
+
+          it 'is successful' do
+            expect(result).to be_successful
+          end
+        end
+
+        context 'with blank input' do
+          let(:input) { { 'foo' => '' } }
+
+          it 'is successful' do
+            expect(result).to be_successful
+          end
         end
       end
     end

@@ -1,12 +1,12 @@
-RSpec.describe 'Predicates: Excluded From' do
+RSpec.describe 'Predicates: Even' do
   context 'with required' do
     subject(:schema) do
       Dry::Validation.Form do
-        required(:foo) { excluded_from?(%w(1 3 5)) }
+        required(:foo) { int? & even? }
       end
     end
 
-    context 'with valid input' do
+    context 'with even input' do
       let(:input) { { 'foo' => '2' } }
 
       it 'is successful' do
@@ -18,39 +18,39 @@ RSpec.describe 'Predicates: Excluded From' do
       let(:input) { {} }
 
       it 'is not successful' do
-        expect(result).to be_failing ['is missing', 'must not be one of: 1, 3, 5']
+        expect(result).to be_failing ['is missing', 'must be even']
       end
     end
 
     context 'with nil input' do
       let(:input) { { 'foo' => nil } }
 
-      it 'is successful' do
-        expect(result).to be_successful
+      it 'is not successful' do
+        expect(result).to be_failing ['must be an integer', 'must be even']
       end
     end
 
     context 'with blank input' do
       let(:input) { { 'foo' => '' } }
 
-      it 'is successful' do
-        expect(result).to be_successful
+      it 'is not successful' do
+        expect(result).to be_failing ['must be an integer', 'must be even']
       end
     end
 
-    context 'with invalid type' do
-      let(:input) { { 'foo' => { 'a' => '1' } } }
-
-      it 'is successful' do
-        expect(result).to be_successful
-      end
-    end
-
-    context 'with invalid input' do
-      let(:input) { { 'foo' => '5' } }
+    context 'with invalid input type' do
+      let(:input) { { 'foo' => [] } }
 
       it 'is not successful' do
-        expect(result).to be_failing ['must not be one of: 1, 3, 5']
+        expect(result).to be_failing ['must be an integer', 'must be even']
+      end
+    end
+
+    context 'with odd input' do
+      let(:input) { { 'foo' => '1' } }
+
+      it 'is not successful' do
+        expect(result).to be_failing ['must be even']
       end
     end
   end
@@ -58,11 +58,11 @@ RSpec.describe 'Predicates: Excluded From' do
   context 'with optional' do
     subject(:schema) do
       Dry::Validation.Form do
-        optional(:foo) { excluded_from?(%w(1 3 5)) }
+        optional(:foo) { int? & even? }
       end
     end
 
-    context 'with valid input' do
+    context 'with even input' do
       let(:input) { { 'foo' => '2' } }
 
       it 'is successful' do
@@ -81,32 +81,32 @@ RSpec.describe 'Predicates: Excluded From' do
     context 'with nil input' do
       let(:input) { { 'foo' => nil } }
 
-      it 'is successful' do
-        expect(result).to be_successful
+      it 'is not successful' do
+        expect(result).to be_failing ['must be an integer', 'must be even']
       end
     end
 
     context 'with blank input' do
       let(:input) { { 'foo' => '' } }
 
-      it 'is successful' do
-        expect(result).to be_successful
+      it 'is not successful' do
+        expect(result).to be_failing ['must be an integer', 'must be even']
       end
     end
 
-    context 'with invalid type' do
-      let(:input) { { 'foo' => { 'a' => '1' } } }
-
-      it 'is successful' do
-        expect(result).to be_successful
-      end
-    end
-
-    context 'with invalid input' do
-      let(:input) { { 'foo' => '5' } }
+    context 'with invalid input type' do
+      let(:input) { { 'foo' => [] } }
 
       it 'is not successful' do
-        expect(result).to be_failing ['must not be one of: 1, 3, 5']
+        expect(result).to be_failing ['must be an integer', 'must be even']
+      end
+    end
+
+    context 'with odd input' do
+      let(:input) { { 'foo' => '1' } }
+
+      it 'is not successful' do
+        expect(result).to be_failing ['must be even']
       end
     end
   end
@@ -116,7 +116,7 @@ RSpec.describe 'Predicates: Excluded From' do
       context 'with value' do
         subject(:schema) do
           Dry::Validation.Form do
-            required(:foo).value(excluded_from?: %w(1 3 5))
+            required(:foo).value(:int?, :even?)
           end
         end
 
@@ -132,39 +132,39 @@ RSpec.describe 'Predicates: Excluded From' do
           let(:input) { {} }
 
           it 'is not successful' do
-            expect(result).to be_failing ['is missing', 'must not be one of: 1, 3, 5']
+            expect(result).to be_failing ['is missing', 'must be even']
           end
         end
 
         context 'with nil input' do
           let(:input) { { 'foo' => nil } }
 
-          it 'is successful' do
-            expect(result).to be_successful
+          it 'is not successful' do
+            expect(result).to be_failing ['must be an integer', 'must be even']
           end
         end
 
         context 'with blank input' do
           let(:input) { { 'foo' => '' } }
 
-          it 'is successful' do
-            expect(result).to be_successful
+          it 'is not successful' do
+            expect(result).to be_failing ['must be an integer', 'must be even']
           end
         end
 
-        context 'with invalid type' do
-          let(:input) { { 'foo' => { 'a' => '1' } } }
-
-          it 'is successful' do
-            expect(result).to be_successful
-          end
-        end
-
-        context 'with invalid input' do
-          let(:input) { { 'foo' => '5' } }
+        context 'with invalid input type' do
+          let(:input) { { 'foo' => [] } }
 
           it 'is not successful' do
-            expect(result).to be_failing ['must not be one of: 1, 3, 5']
+            expect(result).to be_failing ['must be an integer', 'must be even']
+          end
+        end
+
+        context 'with odd input' do
+          let(:input) { { 'foo' => '1' } }
+
+          it 'is not successful' do
+            expect(result).to be_failing ['must be even']
           end
         end
       end
@@ -172,11 +172,11 @@ RSpec.describe 'Predicates: Excluded From' do
       context 'with filled' do
         subject(:schema) do
           Dry::Validation.Form do
-            required(:foo).filled(excluded_from?: %w(1 3 5))
+            required(:foo).filled(:int?, :even?)
           end
         end
 
-        context 'with valid input' do
+        context 'with even input' do
           let(:input) { { 'foo' => '2' } }
 
           it 'is successful' do
@@ -188,7 +188,7 @@ RSpec.describe 'Predicates: Excluded From' do
           let(:input) { {} }
 
           it 'is not successful' do
-            expect(result).to be_failing ['is missing', 'must not be one of: 1, 3, 5']
+            expect(result).to be_failing ['is missing', 'must be even']
           end
         end
 
@@ -196,7 +196,7 @@ RSpec.describe 'Predicates: Excluded From' do
           let(:input) { { 'foo' => nil } }
 
           it 'is not successful' do
-            expect(result).to be_failing ['must be filled', 'must not be one of: 1, 3, 5']
+            expect(result).to be_failing ['must be filled', 'must be even']
           end
         end
 
@@ -204,23 +204,23 @@ RSpec.describe 'Predicates: Excluded From' do
           let(:input) { { 'foo' => '' } }
 
           it 'is not successful' do
-            expect(result).to be_failing ['must be filled', 'must not be one of: 1, 3, 5']
+            expect(result).to be_failing ['must be filled', 'must be even']
           end
         end
 
-        context 'with invalid type' do
-          let(:input) { { 'foo' => { 'a' => '1' } } }
-
-          it 'is successful' do
-            expect(result).to be_successful
-          end
-        end
-
-        context 'with invalid input' do
-          let(:input) { { 'foo' => '5' } }
+        context 'with invalid input type' do
+          let(:input) { { 'foo' => [] } }
 
           it 'is not successful' do
-            expect(result).to be_failing ['must not be one of: 1, 3, 5']
+            expect(result).to be_failing ['must be filled', 'must be even']
+          end
+        end
+
+        context 'with odd input' do
+          let(:input) { { 'foo' => '1' } }
+
+          it 'is not successful' do
+            expect(result).to be_failing ['must be even']
           end
         end
       end
@@ -228,11 +228,11 @@ RSpec.describe 'Predicates: Excluded From' do
       context 'with maybe' do
         subject(:schema) do
           Dry::Validation.Form do
-            required(:foo).maybe(excluded_from?: %w(1 3 5))
+            required(:foo).maybe(:int?, :even?)
           end
         end
 
-        context 'with valid input' do
+        context 'with even input' do
           let(:input) { { 'foo' => '2' } }
 
           it 'is successful' do
@@ -244,7 +244,7 @@ RSpec.describe 'Predicates: Excluded From' do
           let(:input) { {} }
 
           it 'is not successful' do
-            expect(result).to be_failing ['is missing', 'must not be one of: 1, 3, 5']
+            expect(result).to be_failing ['is missing', 'must be even']
           end
         end
 
@@ -264,19 +264,19 @@ RSpec.describe 'Predicates: Excluded From' do
           end
         end
 
-        context 'with invalid type' do
-          let(:input) { { 'foo' => { 'a' => '1' } } }
+        context 'with invalid input type' do
+          let(:input) { { 'foo' => [] } }
 
-          it 'is successful' do
-            expect(result).to be_successful
+          it 'is not successful' do
+            expect(result).to be_failing ['must be an integer', 'must be even']
           end
         end
 
-        context 'with invalid input' do
-          let(:input) { { 'foo' => '5' } }
+        context 'with odd input' do
+          let(:input) { { 'foo' => '1' } }
 
           it 'is not successful' do
-            expect(result).to be_failing ['must not be one of: 1, 3, 5']
+            expect(result).to be_failing ['must be even']
           end
         end
       end
@@ -286,11 +286,11 @@ RSpec.describe 'Predicates: Excluded From' do
       context 'with value' do
         subject(:schema) do
           Dry::Validation.Form do
-            optional(:foo).value(excluded_from?: %w(1 3 5))
+            optional(:foo).value(:int?, :even?)
           end
         end
 
-        context 'with valid input' do
+        context 'with even input' do
           let(:input) { { 'foo' => '2' } }
 
           it 'is successful' do
@@ -309,32 +309,32 @@ RSpec.describe 'Predicates: Excluded From' do
         context 'with nil input' do
           let(:input) { { 'foo' => nil } }
 
-          it 'is successful' do
-            expect(result).to be_successful
+          it 'is not successful' do
+            expect(result).to be_failing ['must be an integer', 'must be even']
           end
         end
 
         context 'with blank input' do
           let(:input) { { 'foo' => '' } }
 
-          it 'is successful' do
-            expect(result).to be_successful
+          it 'is not successful' do
+            expect(result).to be_failing ['must be an integer', 'must be even']
           end
         end
 
-        context 'with invalid type' do
-          let(:input) { { 'foo' => { 'a' => '1' } } }
-
-          it 'is successful' do
-            expect(result).to be_successful
-          end
-        end
-
-        context 'with invalid input' do
-          let(:input) { { 'foo' => '5' } }
+        context 'with invalid input type' do
+          let(:input) { { 'foo' => [] } }
 
           it 'is not successful' do
-            expect(result).to be_failing ['must not be one of: 1, 3, 5']
+            expect(result).to be_failing ['must be an integer', 'must be even']
+          end
+        end
+
+        context 'with odd input' do
+          let(:input) { { 'foo' => '1' } }
+
+          it 'is not successful' do
+            expect(result).to be_failing ['must be even']
           end
         end
       end
@@ -342,11 +342,11 @@ RSpec.describe 'Predicates: Excluded From' do
       context 'with filled' do
         subject(:schema) do
           Dry::Validation.Form do
-            optional(:foo).filled(excluded_from?: %w(1 3 5))
+            optional(:foo).filled(:int?, :even?)
           end
         end
 
-        context 'with valid input' do
+        context 'with even input' do
           let(:input) { { 'foo' => '2' } }
 
           it 'is successful' do
@@ -366,7 +366,7 @@ RSpec.describe 'Predicates: Excluded From' do
           let(:input) { { 'foo' => nil } }
 
           it 'is not successful' do
-            expect(result).to be_failing ['must be filled', 'must not be one of: 1, 3, 5']
+            expect(result).to be_failing ['must be filled', 'must be even']
           end
         end
 
@@ -374,23 +374,23 @@ RSpec.describe 'Predicates: Excluded From' do
           let(:input) { { 'foo' => '' } }
 
           it 'is not successful' do
-            expect(result).to be_failing ['must be filled', 'must not be one of: 1, 3, 5']
+            expect(result).to be_failing ['must be filled', 'must be even']
           end
         end
 
-        context 'with invalid type' do
-          let(:input) { { 'foo' => { 'a' => '1' } } }
-
-          it 'is successful' do
-            expect(result).to be_successful
-          end
-        end
-
-        context 'with invalid input' do
-          let(:input) { { 'foo' => '5' } }
+        context 'with invalid input type' do
+          let(:input) { { 'foo' => [] } }
 
           it 'is not successful' do
-            expect(result).to be_failing ['must not be one of: 1, 3, 5']
+            expect(result).to be_failing ['must be filled', 'must be even']
+          end
+        end
+
+        context 'with odd input' do
+          let(:input) { { 'foo' => '1' } }
+
+          it 'is not successful' do
+            expect(result).to be_failing ['must be even']
           end
         end
       end
@@ -398,11 +398,11 @@ RSpec.describe 'Predicates: Excluded From' do
       context 'with maybe' do
         subject(:schema) do
           Dry::Validation.Form do
-            optional(:foo).maybe(excluded_from?: %w(1 3 5))
+            optional(:foo).maybe(:int?, :even?)
           end
         end
 
-        context 'with valid input' do
+        context 'with even input' do
           let(:input) { { 'foo' => '2' } }
 
           it 'is successful' do
@@ -434,19 +434,19 @@ RSpec.describe 'Predicates: Excluded From' do
           end
         end
 
-        context 'with invalid type' do
-          let(:input) { { 'foo' => { 'a' => '1' } } }
+        context 'with invalid input type' do
+          let(:input) { { 'foo' => [] } }
 
-          it 'is successful' do
-            expect(result).to be_successful
+          it 'is not successful' do
+            expect(result).to be_failing ["must be an integer", "must be even"]
           end
         end
 
-        context 'with invalid input' do
-          let(:input) { { 'foo' => '5' } }
+        context 'with odd input' do
+          let(:input) { { 'foo' => '1' } }
 
           it 'is not successful' do
-            expect(result).to be_failing ['must not be one of: 1, 3, 5']
+            expect(result).to be_failing ['must be even']
           end
         end
       end
